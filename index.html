@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Todo List WebApp</title>
+		
+		<style>
+
+         .todoApp{
+            width: 40%;
+            font-size: 20px;
+            text-align: center;
+            align-items: center;
+            background-color: bisque;
+        }    
+
+        .todoHeader{
+            background-color: rgb(151, 151, 226);
+            text-align: center;
+        }
+      
+
+        i > div {
+            background-color: rgb(151, 151, 226);
+            align-content: center;
+            font-size: 45px;
+        }
+        .strike{
+            text-decoration: line-through;
+        }
+        </style>
+    </head>
+<body>
+   
+
+
+
+    <div class="todoApp"> 
+            <h1>Todo List WebApp </h1>
+        <div class="todoHeader">
+            <input type="text" id="mytodo" value="">   
+            <button onclick="addTodoHandler()">Add todo</button> 
+            <hr/> 
+        </div>
+      
+        <i id='myTodoList' > </i>        
+           
+    </div>
+      
+  
+  
+
+<script>
+
+ id =0; 
+ var mytodoArray = [] ;
+
+ mytodoArray = JSON.parse(localStorage.getItem("localTodos"));
+
+ if(mytodoArray){
+    showTodo();
+ }else{
+    console.log("data is  not found");
+    var test = ['welcome todo !']
+    localStorage.setItem('localTodos', JSON.stringify(test));     
+    console.log("store is created !");
+    mytodoArray = JSON.parse(localStorage.getItem("localTodos")); 
+    showTodo();
+ }
+
+ function showTodo(){
+       var dispEleList = document.getElementById('myTodoList');
+
+        for( id ; id <mytodoArray.length; id++){
+            createTodoEle(mytodoArray[id] , id);
+        }
+    }
+
+// showTodo();
+
+
+    // stricked function 
+        var striked = function(){
+				var temp = document.getElementById(this.id);
+				var nd = document.getElementById(temp.parentNode.parentNode.id);
+					if(temp.checked){
+					nd.className = "strike";//setting css class name
+					}
+					else{
+						nd.className = "";
+					}
+				};
+
+
+ function addTodoHandler(){
+      // add child to todolist
+    var newTodo = document.getElementById('mytodo').value;
+    if(newTodo.length > 0){
+        mytodoArray.push(newTodo);
+        updateDb();
+        
+
+     var addTodo = createTodoEle(mytodoArray.pop() , id++);
+
+        Console.length(mytodoArray);
+
+    }else{
+        alert(' Nothing to add in todo please check and try again ! ');
+    }
+
+}
+
+// var myList = document.getElementById('myTodoList');
+
+function createTodoEle(todoInput , id){
+
+    var todoDiv = document.createElement('div'); todoDiv.id="todoDiv"+id; 
+        
+        console.log("todoDiv is created at"+todoDiv.id);
+        var todocheckBox = document.createElement('input'); 
+        todocheckBox.type = 'checkbox'; 
+        todocheckBox.id = "checkbox"+id;
+
+        var tododeleteIcon = document.createElement('img');
+		tododeleteIcon.src = "http://icons.iconarchive.com/icons/fasticon/isimple-system/128/file-del-icon.png";
+        tododeleteIcon.id="delete"+id;
+
+        tododeleteIcon.style.width = '25px';  tododeleteIcon.style.height = '25px';
+    
+        var todoTxt = document.createTextNode(todoInput); todoTxt.id="todoTxt"+id;
+          
+            todoDiv.appendChild(todocheckBox);  
+           
+            var boxid = todocheckBox.id;
+            todoDiv.appendChild(todoTxt);
+            var textid = todoTxt.id;
+            todoDiv.appendChild(tododeleteIcon);
+            var diconid = tododeleteIcon.id;
+
+            var dispEleList = document.getElementById('myTodoList');
+                dispEleList.appendChild(todoDiv);
+
+                document.getElementById("checkbox"+id).addEventListener("click",toodChecked);
+                document.getElementById("delete"+id).addEventListener("click",todoDelete);
+          
+ 
+}   
+
+
+function toodChecked(){
+    console.log("chicked req call");
+    var checkedEle = document.getElementById(this.id);
+    var checkedParent = document.getElementById(checkedEle.parentNode.id);
+
+    checkedEle.checked ? checkedParent.className ="strike" : checkedParent.className ="" ;
+    
+}
+
+function todoDelete(){
+    console.log("delte req call");
+    var deleteEle = document.getElementById(this.id).parentNode;
+        deleteEle.parentNode.removeChild(deleteEle);
+        let index = mytodoArray.indexOf(deleteEle.id);
+    mytodoArray.splice(index,1);
+    updateDb()
+}
+
+function updateDb(){
+         localStorage.setItem('localTodos', JSON.stringify(mytodoArray)); // send to local storage
+         location.reload();
+}
+
+
+</script>
+
+</body>
+</html>
